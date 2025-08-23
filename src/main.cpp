@@ -20,6 +20,7 @@ uint8_t DHTPin = D2;
 DHT dht(DHTPin, DHTTYPE);
 
 //Global constants including file names and locations
+const char *WIFISECRETSFILENAME = "/wifi.json";
 const char *CONFIGFILENAME = "/config.json";
 const char *CERTIFICATE = "/fullchain.pem";
 const char *CERTPRIVKEY = "/privkey.pem";
@@ -45,11 +46,26 @@ String HTMLTemplate;
 // Helper functions
 
 bool isAuthorized(String f) {
-  if (f.endsWith("fullchain.pem"))
+  if (f.endsWith(".pem"))
     return true;
   if (f.endsWith(".html"))
     return true;
   if (f.endsWith(".json"))
+    return true;
+  if (f.endsWith(".css"))
+    return true;
+
+  return false;
+}
+
+bool isViewAuthorized(String f) {
+  if (f.endsWith("fullchain.pem"))
+    return true;
+  if (f.endsWith("config.json"))
+    return true;
+  if (f.endsWith(".html"))
+    return true;
+  if (f.endsWith(".css"))
     return true;
 
   return false;
@@ -58,7 +74,7 @@ bool isAuthorized(String f) {
 //Convert Celcius to Farenheit
 float tempCtoF(float c)
 {
-  return ((c * (9.0 / 5.0)) + 32);
+  return ((c * (9.0 / 5.0)) + 32.0);
 }
 
 //Read in a file
@@ -160,7 +176,6 @@ void replyOK()
 }
 
 //HTML request handlers
-
 void handleRoot()
 {
   Serial.println("handleRoot");
@@ -190,8 +205,9 @@ void handleJSON()
 }
 
 bool handleFileRead(String path)
-{ // send the right file to the client (if it exists)
-  if (isAuthorized(path)) {
+{ 
+  // send the right file to the client (if it exists)
+  if (isViewAuthorized(path)) {
     Serial.println("handleFileRead: " + path);
     String contentType = getContentType(path); // Get the MIME type
     if (LittleFS.exists(path))
@@ -238,7 +254,7 @@ void handleFileUpload()
     {
       Serial.println("Status UPLOAD_FILE_END");
       if (fsUploadFile)
-      {                       // If the file was successfully created
+      { // If the file was successfully created
         fsUploadFile.close(); // Close the file again
         Serial.print("handleFileUpload Size: ");
         Serial.println(upload.totalSize);
@@ -256,7 +272,9 @@ void handleFileUpload()
   }
 }
 
+/////////////////////
 // Setup
+/////////////////////
 void setup()
 {
   Serial.begin(115200);
@@ -267,6 +285,12 @@ void setup()
     Serial.println("Failed to mount file system");
     return;
   }
+  //Set up Wifi connection info from the config file
+  JsonDocument wifi = getConfig(WIFISECRETSFILENAME);
+  const char *ssid = wifi["SSID"].as<const char *>();
+  const char *password = wifi["WiFi_Password"].as<const char *>();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
 
   JsonDocument config = getConfig(CONFIGFILENAME);
   if (config[LOCKEY].is<JsonVariant>())
@@ -286,12 +310,6 @@ void setup()
 
   //Load Template
   HTMLTemplate = getFile(TEMPLATEFILENAME);
-
-  //Set up Wifi connection info from the config file
-  const char *ssid = config["SSID"].as<const char *>();
-  const char *password = config["WiFi_Password"].as<const char *>();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
 
   // connect to your local wi-fi network
   WiFi.begin(ssid, password);
@@ -333,6 +351,9 @@ void setup()
   Serial.println("HTTPS server started");
 }
 
+/////////////////////
+// Main Loop
+/////////////////////
 void loop()
 {
 

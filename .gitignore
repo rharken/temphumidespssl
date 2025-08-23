@@ -1051,7 +1051,7 @@ dkms.conf
 *.dis
 
 # Personal
-config.json
+wifi.json
 .vscode/launch.json
 .vscode/settings.json
 fullchain.pem

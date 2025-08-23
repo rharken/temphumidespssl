@@ -1,0 +1,73 @@
+html {
+    font-family: Helvetica;
+    display: inline-block;
+    margin: 0px auto;
+    text-align: center;
+}
+
+body {
+    margin-top: 50px;
+}
+
+h1 {
+    color: rgb(93, 57, 178);
+    margin: 50px auto 30px;
+}
+
+p {
+    font-size: 24px;
+    color: #444444;
+    margin-bottom: 10px;
+}
+
+i {
+    color: #49d337;
+    font-size: 100px;
+    line-height: 200px;
+    margin-left: -15px;
+}
+    
+.card {
+    background: white;
+    padding: 60px;
+    border-radius: 4px;
+    box-shadow: 0 2px 3px #C8D0D8;
+    display: inline-block;
+    margin: 0 auto;
+}
+
+/* Styling for the entire file input element */
+input[type="file"] {
+    font-size: 18px;
+    /* Add some basic padding and border for visual separation */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 600px;
+}
+
+/* Styling for the file selector button */
+.button, input[type="file"]::file-selector-button {
+    font-size: 18px;
+    background-color: #364ee6;
+    /* Blue button background */
+    color: white;
+    /* White text color */
+    padding: 8px 15px;
+    /* Padding inside the button */
+    border: none;
+    /* No border for the button */
+    border-radius: 4px;
+    /* Slightly rounded corners */
+    cursor: pointer;
+    /* Indicate it's clickable */
+    transition: background-color 0.3s ease;
+    /* Smooth hover effect */
+}
+
+/* Hover effect for the file selector button */
+.button:hover, input[type="file"]::file-selector-button:hover {
+    font-size: 18px;
+    background-color: #0012b3;
+    /* Darker blue on hover */
+}
